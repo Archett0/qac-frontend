@@ -1,31 +1,22 @@
-/* Sidebar layout */
-.sidebar-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Full height */
-  }
-  
-  /* Logo box styling */
-  .sidebar-logo {
-    text-align: center;
-    padding: 2vw 0; /* Responsive padding */
-  }
-  
-  /* General styles for ListItem */
-  .list-item {
+/* General styles for ListItem */
+.list-item {
     position: relative;
     border-radius: 10px;
     overflow: hidden;
     transition: box-shadow 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;  /* Font family */
+    font-size: 1rem;                     /* Base font size */
+    font-weight: 400;                    /* Normal font weight */
+    color: #333;                         /* Default text color */
+    text-transform: none;                /* Text casing (none, uppercase, lowercase) */
   }
   
   /* Selected styles */
   .list-item.selected {
     background-color: #e3f2fd;
     box-shadow: 0px 2px 6px rgba(33, 150, 243, 0.3);
-    color: #1976d2;
-    font-weight: 600;
+    color: #1976d2; /* Blue text for selected item */
+    font-weight: 600; /* Bold font for selected item */
   }
   
   /* Hover styles for unselected items */
@@ -39,6 +30,12 @@
     background-color: #bbdefb;
   }
   
+  /* Ensures all links don't change color on click */
+  .list-item a {
+    text-decoration: none;
+    color: inherit; /* Inherit color from the parent */
+  }
+  
   /* Ripple animation */
   .ripple {
     position: absolute;
@@ -49,10 +46,11 @@
     pointer-events: none;
   }
   
+  /* Ripple keyframes */
   @keyframes ripple {
     to {
-      transform: scale(6);
-      opacity: 0;
+      transform: scale(6); /* Ripple grows 6 times its size */
+      opacity: 0; /* Fade out as it expands */
     }
   }
   

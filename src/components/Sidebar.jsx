@@ -84,27 +84,27 @@ const Sidebar = () => {
             <ListItem
               button
               component={Link}
-              to="/products"
+              to="/questions"
               onClick={(e) => handleListItemClick(2, e)}
               className={`list-item ${selectedIndex === 2 ? 'selected' : ''}`}
             >
               <ListItemIcon sx={{ fontSize: '2vw' }}>
                 <ShoppingCartIcon />
               </ListItemIcon>
-              <ListItemText primary="Products" sx={{ fontSize: '1.2vw' }} />
+              <ListItemText primary="Questions" sx={{ fontSize: '1.2vw' }} />
             </ListItem>
 
             <ListItem
               button
               component={Link}
-              to="/blog"
+              to="/answers"
               onClick={(e) => handleListItemClick(3, e)}
               className={`list-item ${selectedIndex === 3 ? 'selected' : ''}`}
             >
               <ListItemIcon sx={{ fontSize: '2vw' }}>
                 <ArticleIcon />
               </ListItemIcon>
-              <ListItemText primary="Blog" sx={{ fontSize: '1.2vw' }} />
+              <ListItemText primary="Answers" sx={{ fontSize: '1.2vw' }} />
             </ListItem>
 
             <ListItem

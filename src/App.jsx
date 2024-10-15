@@ -5,9 +5,9 @@ import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Dashboard from './pages/Dashboard';
 import UserTable from './pages/UserTable';
-import Products from './pages/Products';
-import Blog from './pages/Blog';
+import Questions from './pages/Questions';
 import SignOut from './pages/SignOut';
+import Answers from './pages/Answers';
 
 function App() {
   return (
@@ -22,8 +22,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/users" element={<UserTable />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/blog" element={<Blog />} />
+            <Route path="/answers" element={<Answers />} />
+            <Route path="/questions" element={<Questions />} />
             <Route path="/signout" element={<SignOut />} />
           </Routes>
         </Box>
