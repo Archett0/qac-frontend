@@ -1,26 +1,63 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Avatar, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { 
+  Table, TableBody, TableCell, TableContainer, 
+  TableHead, TableRow, Paper, Avatar, Button, CircularProgress 
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { fetchUsers } from '../services/userService'; // Import the service
 
-const users = [
-  { id: 1, name: 'Adam Trantow', company: 'Mohr, Langworth and Hills', role: 'UI Designer', verified: true, status: 'Active' },
-  { id: 2, name: 'Angel Rolfson-Kulas', company: 'Koch and Sons', role: 'UI Designer', verified: true, status: 'Active' },
-  { id: 3, name: 'Betty Hammes', company: 'Waelchi – VonRueden', role: 'UI Designer', verified: false, status: 'Banned' },
-  { id: 4, name: 'Billy Braun', company: 'White, Cassin and Goldner', role: 'UI Designer', verified: true, status: 'Active' },
-  { id: 5, name: 'Billy Stoltenberg', company: 'Medhurst, Moore and Franey', role: 'Leader', verified: true, status: 'Banned' },
-];
-
-const getStatusButton = (status) => {
-  if (status === 'Active') {
-    return <Button variant="contained" color="success" size="small">Active</Button>;
-  } else {
-    return <Button variant="contained" color="error" size="small">Banned</Button>;
-  }
-};
+const getStatusButton = (status) => (
+  <Button 
+    variant="contained" 
+    color={status === 'Active' ? 'success' : 'error'} 
+    size="small"
+  >
+    {status}
+  </Button>
+);
 
 const UserTable = () => {
+  const [users, setUsers] = useState([]); // Store fetched users
+  const [loading, setLoading] = useState(true); // Track loading state
+  const [error, setError] = useState(null); // Track errors
+
+  // Fetch users from the API when component mounts
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const data = await fetchUsers(); // Call the service
+        setUsers(data); // Set the users in state
+      } catch (err) {
+        setError('Failed to fetch users'); // Handle errors
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    getUsers(); // Invoke the fetch function
+  }, []);
+
+  // Handle loading state
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <CircularProgress /> {/* Show loading spinner */}
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <p>{error}</p> {/* Show error message */}
+      </div>
+    );
+  }
+
+  // Render the user table
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -38,15 +75,21 @@ const UserTable = () => {
           {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell>
-                <Avatar alt={user.name} src={`https://i.pravatar.cc/300?u=${user.id}`} />
-                {user.name}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Avatar alt={user.username} src={`https://i.pravatar.cc/300?u=${user.id}`} />
+                  {user.username}
+                </div>
               </TableCell>
-              <TableCell>{user.company}</TableCell>
+              <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
               <TableCell>
-                {user.verified ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
+                {user.role === 'USER' ? (
+                  <CheckCircleIcon color="success" />
+                ) : (
+                  <CancelIcon color="error" />
+                )}
               </TableCell>
-              <TableCell>{getStatusButton(user.status)}</TableCell>
+              <TableCell>{getStatusButton(user.status || 'Active')}</TableCell>
               <TableCell>
                 <MoreVertIcon />
               </TableCell>
