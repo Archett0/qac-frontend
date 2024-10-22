@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Box } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Box, IconButton, Collapse } from '@mui/material';
+import { ExpandLess, ExpandMore, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -10,6 +11,8 @@ import './Sidebar.css';
 
 const Sidebar = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [open, setOpen] = useState(true); // Control sidebar collapse
+  const [questionsOpen, setQuestionsOpen] = useState(false); // Control questions submenu
 
   const handleListItemClick = (index, event) => {
     // Create ripple effect
@@ -37,22 +40,35 @@ const Sidebar = () => {
     setSelectedIndex(index);
   };
 
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
+  const handleQuestionsClick = () => {
+    setQuestionsOpen(!questionsOpen);
+  };
+
   return (
     <Drawer
       variant="permanent"
       sx={{
-        width: '20vw',
+        width: open ? 240 : 60,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: '20vw', boxSizing: 'border-box' },
+        [`& .MuiDrawer-paper`]: { width: open ? 240 : 60, boxSizing: 'border-box', transition: 'width 0.3s' },
       }}
     >
       <Box className="sidebar-content" sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Logo or icon at the top */}
+        {/* Collapse Button */}
+        <IconButton onClick={toggleDrawer} sx={{ alignSelf: open ? 'flex-end' : 'center', margin: '10px' }}>
+          {open ? <ChevronLeft /> : <ChevronRight />}
+        </IconButton>
+
+        {/* Logo or avatar */}
         <Box className="sidebar-logo" sx={{ display: 'flex', justifyContent: 'center', padding: '2vw 0' }}>
           <Avatar alt="Logo" src="https://i.pravatar.cc/150?img=10" sx={{ width: '7vw', height: '7vw' }} />
         </Box>
 
-        {/* The menu list starts at 30% height of the page */}
+        {/* Menu */}
         <Box className="sidebar-menu" sx={{ marginTop: '10vh', paddingBottom: '10px' }}>
           <List>
             <ListItem
@@ -62,10 +78,10 @@ const Sidebar = () => {
               onClick={(e) => handleListItemClick(0, e)}
               className={`list-item ${selectedIndex === 0 ? 'selected' : ''}`}
             >
-              <ListItemIcon sx={{ fontSize: '2vw' }}>
+              <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" sx={{ fontSize: '1.2vw' }} />
+              {open && <ListItemText primary="Dashboard" />}
             </ListItem>
 
             <ListItem
@@ -75,49 +91,72 @@ const Sidebar = () => {
               onClick={(e) => handleListItemClick(1, e)}
               className={`list-item ${selectedIndex === 1 ? 'selected' : ''}`}
             >
-              <ListItemIcon sx={{ fontSize: '2vw' }}>
+              <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="Users" sx={{ fontSize: '1.2vw' }} />
+              {open && <ListItemText primary="Users" />}
             </ListItem>
 
-            <ListItem
-              button
-              component={Link}
-              to="/questions"
-              onClick={(e) => handleListItemClick(2, e)}
-              className={`list-item ${selectedIndex === 2 ? 'selected' : ''}`}
-            >
-              <ListItemIcon sx={{ fontSize: '2vw' }}>
+            {/* Questions Submenu */}
+            <ListItem button onClick={handleQuestionsClick} className={`list-item ${selectedIndex === 2 ? 'selected' : ''}`}>
+              <ListItemIcon>
                 <ShoppingCartIcon />
               </ListItemIcon>
-              <ListItemText primary="Questions" sx={{ fontSize: '1.2vw' }} />
+              {open && <ListItemText primary="Questions" />}
+              {open && (questionsOpen ? <ExpandLess /> : <ExpandMore />)}
             </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/answers"
-              onClick={(e) => handleListItemClick(3, e)}
-              className={`list-item ${selectedIndex === 3 ? 'selected' : ''}`}
-            >
-              <ListItemIcon sx={{ fontSize: '2vw' }}>
-                <ArticleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Answers" sx={{ fontSize: '1.2vw' }} />
-            </ListItem>
+            <Collapse in={questionsOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/questions/list"
+                  onClick={(e) => handleListItemClick(3, e)}
+                  className={`list-item ${selectedIndex === 3 ? 'selected' : ''}`}
+                >
+                  <ListItemText inset primary="List" />
+                </ListItem>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/questions/create"
+                  onClick={(e) => handleListItemClick(4, e)}
+                  className={`list-item ${selectedIndex === 4 ? 'selected' : ''}`}
+                >
+                  <ListItemText inset primary="Create" />
+                </ListItem>
+                {/* <ListItem
+                  button
+                  component={Link}
+                  to="/questions/update"
+                  onClick={(e) => handleListItemClick(5, e)}
+                  className={`list-item ${selectedIndex === 5 ? 'selected' : ''}`}
+                >
+                  <ListItemText inset primary="Update" />
+                </ListItem>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/questions/show"
+                  onClick={(e) => handleListItemClick(6, e)}
+                  className={`list-item ${selectedIndex === 6 ? 'selected' : ''}`}
+                >
+                  <ListItemText inset primary="Show" />
+                </ListItem> */}
+              </List>
+            </Collapse>
 
             <ListItem
               button
               component={Link}
               to="/signout"
-              onClick={(e) => handleListItemClick(4, e)}
-              className={`list-item ${selectedIndex === 4 ? 'selected' : ''}`}
+              onClick={(e) => handleListItemClick(7, e)}
+              className={`list-item ${selectedIndex === 7 ? 'selected' : ''}`}
             >
-              <ListItemIcon sx={{ fontSize: '2vw' }}>
+              <ListItemIcon>
                 <ExitToAppIcon />
               </ListItemIcon>
-              <ListItemText primary="Sign out" sx={{ fontSize: '1.2vw' }} />
+              {open && <ListItemText primary="Sign out" />}
             </ListItem>
           </List>
         </Box>
