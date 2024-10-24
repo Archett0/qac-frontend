@@ -1,7 +1,7 @@
 // src/services/AnswerService.js
 
 import axios from 'axios';
-import { API_HOST } from '../config/apiconfig'; 
+import { API_HOST } from '../config/apiConfig';
 
 const ANSWER_API_URL = `${API_HOST}/QnA/answers`;
 

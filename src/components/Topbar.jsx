@@ -11,7 +11,7 @@ const Topbar = () => {
   const [notificationCount, setNotificationCount] = useState(0); 
 
   useEffect(() => {
-    const userId = "7294b069-0de5-4366-96d4-7c28db6f1dd2"; 
+    const userId = "d5a28a89-4772-4a5f-a896-f55b8019c46e"; 
 
     const getNotifications = async () => {
       try {
