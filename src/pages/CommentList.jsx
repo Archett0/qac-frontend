@@ -1,8 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Typography, IconButton } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { clickUpvote, getUpvoteCount } from '../services/VoteService';
 
 const CommentList = ({ comments }) => {
+  // the number of upvotes of comment
+  const [upvotes, setUpvotes] = useState({}); // { commentId: upvoteCount }
+
+  // handle upvote click events
+  const handleUpvote = async (commentId) => {
+    try {
+      await clickUpvote({ userId: 'user123456', postId: commentId, authorId: 'author123', authorEmail: 'no.need', postType: 'ANSWER' });
+      // get the number of upvote after clicking
+      const updatedCount = await getUpvoteCount(commentId);
+      setUpvotes((prevUpvotes) => ({
+        ...prevUpvotes,
+        [commentId]: updatedCount,
+      }));
+    } catch (error) {
+      console.error('Failed to upvote:', error);
+    }
+  };
+
+  // get the likes of comments
+  useEffect(() => {
+    async function fetchUpvotes() {
+      const initialUpvotes = {};
+      for (let comment of comments) {
+        try {
+          const count = await getUpvoteCount(comment.id);  // Invoke the service that gets the number of upvotes
+          initialUpvotes[comment.id] = count;
+        } catch (error) {
+          console.error(`Failed to fetch upvotes for comment ${comment.id}:`, error);
+        }
+      }
+      setUpvotes(initialUpvotes);  // Set the number of upvotes received
+    }
+
+    fetchUpvotes();
+  }, [comments]);
+
   const formatDate = (createdAt) => {
     const commentDate = new Date(createdAt);
     const now = new Date();
@@ -44,11 +81,13 @@ const CommentList = ({ comments }) => {
                 {formatDate(comment.createdAt)}
               </Typography>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton style={{ padding: '5px' }}>
+                <IconButton style={{ padding: '5px' }} 
+                  onClick={() => handleUpvote(comment.id)}  // handle upvote click
+                >
                   <FavoriteIcon />
                 </IconButton>
                 <Typography variant="body2" style={{ marginLeft: '5px' }}>
-                  {12}
+                  {upvotes[comment.id] || 0}
                 </Typography>
               </div>
             </div>
