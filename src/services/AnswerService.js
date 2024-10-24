@@ -1,5 +1,3 @@
-// src/services/AnswerService.js
-
 import axios from 'axios';
 import { API_HOST } from '../config/apiConfig';
 
