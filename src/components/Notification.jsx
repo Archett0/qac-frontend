@@ -7,7 +7,7 @@ import { deleteNotification } from '../services/eventService';
 
 export default function Notification({ open, onClose, notifications, onCountChange }) { 
   //get userid from userprofile
-  const userId = "7294b069-0de5-4366-96d4-7c28db6f1dd2"; 
+  const userId = "d5a28a89-4772-4a5f-a896-f55b8019c46e"; 
   const panelRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [notificationData, setNotificationData] = useState({
