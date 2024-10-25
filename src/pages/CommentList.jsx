@@ -10,7 +10,8 @@ const CommentList = ({ comments }) => {
   // handle upvote click events
   const handleUpvote = async (commentId) => {
     try {
-      await clickUpvote({ userId: 'user123456', postId: commentId, authorId: 'author123', authorEmail: 'no.need', postType: 'ANSWER' });
+      // to be change
+      await clickUpvote({ userId: '4396ad4a-cc41-4d06-812f-8cb3885c8449', postId: commentId, authorId: '4396ad4a-cc41-4d06-812f-8cb3885c5211', authorEmail: 'no.need', postType: 'ANSWER' });
       // get the number of upvote after clicking
       const updatedCount = await getUpvoteCount(commentId);
       setUpvotes((prevUpvotes) => ({
@@ -22,7 +23,7 @@ const CommentList = ({ comments }) => {
     }
   };
 
-  // get the likes of comments
+  // get the upvotes of comments
   useEffect(() => {
     async function fetchUpvotes() {
       const initialUpvotes = {};
@@ -30,6 +31,8 @@ const CommentList = ({ comments }) => {
         try {
           const count = await getUpvoteCount(comment.id);  // Invoke the service that gets the number of upvotes
           initialUpvotes[comment.id] = count;
+          // for test
+          // console.log('upvote count of ', comment.id, ' is ', count);
         } catch (error) {
           console.error(`Failed to fetch upvotes for comment ${comment.id}:`, error);
         }

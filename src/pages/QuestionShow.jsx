@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchQuestionById } from '../services/questionService';
 import { sendComment, fetchCommentsByAnswerId, deleteCommentByAnswerId } from '../services/eventService';
 import { createAnswer, fetchAnswersByQuestionId, deleteAnswerById } from '../services/AnswerService';
+import { clickUpvote, getUpvoteCount } from '../services/VoteService'; // upvote
 import { CircularProgress, Typography, Paper, Divider, Button, TextField, IconButton, Avatar } from '@mui/material';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
@@ -20,6 +21,7 @@ const ShowQuestion = () => {
   const [commentPanels, setCommentPanels] = useState({});
   const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState(''); 
+  const [upvotes, setUpvotes] = useState({}); // upvote
 
   useEffect(() => {
     const getQuestionAndAnswers = async () => {
@@ -32,6 +34,7 @@ const ShowQuestion = () => {
         const initialCommentPanels = {};
         answerData.forEach(answer => {
           initialCommentPanels[answer.id] = false;
+          fetchUpvoteCount(answer.id); // get the initial number of upvotes
         });
         setCommentPanels(initialCommentPanels);
       } catch (err) {
@@ -42,6 +45,29 @@ const ShowQuestion = () => {
     };
     getQuestionAndAnswers();
   }, [id]);
+
+  // get the number of upvotes
+  const fetchUpvoteCount = async (answerId) => {
+    try {
+      const count = await getUpvoteCount(answerId);
+      setUpvotes((prevUpvotes) => ({
+        ...prevUpvotes,
+        [answerId]: count,
+      }));
+    } catch (error) {
+      console.error('Failed to fetch upvote count:', error);
+    }
+  };
+
+  // handle upvote click events
+  const handleUpvoteClick = async (answerId) => {
+    try {
+      await clickUpvote({ userId: '4396ad4a-cc41-4d06-812f-8cb3885c4396', postId: answerId, authorId: '4396ad4a-cc41-4d06-812f-8cb3885c6934', authorEmail: 'no.need', postType: 'ANSWER' });
+      fetchUpvoteCount(answerId);
+    } catch (error) {
+      console.error('Failed to upvote:', error);
+    }
+  };
 
   const handleCreateAnswer = async () => {
     try {
@@ -154,8 +180,9 @@ const ShowQuestion = () => {
                 variant="outlined"
                 startIcon={<ThumbUpAltIcon />}
                 style={{ borderRadius: '5px', padding: '5px 10px' }}
+                onClick={() => handleUpvoteClick(answer.id)} // handle upvote
               >
-                Like 294
+                {upvotes[answer.id] || 0} {/* 显示点赞数 */}
               </Button>
               <IconButton style={{ borderRadius: '5px', padding: '5px', marginLeft: 2 }}>
                 <ThumbDownAltIcon />

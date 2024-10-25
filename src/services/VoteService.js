@@ -1,7 +1,7 @@
 import axios from "axios";
-import { API_HOST } from "../config/apiconfig";
+import { API_HOST } from '../config/apiconfig';
 
-const VOTE_API_URL = '${API_HOST/vote}';
+const VOTE_API_URL = `${API_HOST}/vote`;
 
 /**
  * Send an upvote request to the API.
