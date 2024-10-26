@@ -11,7 +11,7 @@ const SignOut = () => {
     navigate('/login');
   }, [navigate]);
 
-  return <h1>Signing out...</h1>;
+  return <h1>Sign out success</h1>;
 };
 
 export default SignOut;
