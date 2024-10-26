@@ -7,8 +7,6 @@ const SignOut = () => {
   useEffect(() => {
 
     localStorage.removeItem('jwtToken');
-    
-    // localStorage.removeItem('userInfo'); 
 
     navigate('/login');
   }, [navigate]);

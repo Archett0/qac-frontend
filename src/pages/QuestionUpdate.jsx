@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextField, Button, CircularProgress } from '@mui/material';
-import { fetchQuestionById, updateQuestion } from '../services/questionService'; // API service
+import { fetchQuestionById, updateQuestion } from '../services/questionService';
 
 const UpdateQuestion = () => {
   const { id } = useParams();
@@ -13,7 +13,7 @@ const UpdateQuestion = () => {
     const getQuestion = async () => {
       try {
         const data = await fetchQuestionById(id);
-        setQuestion(data); // 这里会设置整个 question 对象，包括 id, title, content, ownerId
+        setQuestion(data);
       } catch (err) {
         console.error('Failed to load question', err);
       } finally {
@@ -27,7 +27,6 @@ const UpdateQuestion = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // 直接将整个 question 对象传递给 updateQuestion 方法
       await updateQuestion(question);
       navigate('/questions');
     } catch (err) {
@@ -36,8 +35,7 @@ const UpdateQuestion = () => {
       setLoading(false);
     }
   };
-
-  // 使用 handleChange 统一处理输入框的变化
+  
   const handleChange = (e) => {
     setQuestion({
       ...question,
