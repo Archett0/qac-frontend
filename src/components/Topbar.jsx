@@ -47,9 +47,6 @@ const Topbar = () => {
   return (
     <AppBar position="fixed" sx={{ backgroundColor: '#fff', boxShadow: 'none', color: '#000', marginBottom: 2 }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Typography variant="h6" noWrap component="div">
-          Topbar
-        </Typography>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
           <IconButton color="inherit" onClick={handleNotificationOpen} sx={{ mr: 3 }}>
             <Badge badgeContent={notificationCount} color="error"> 

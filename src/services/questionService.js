@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../config/axios';
 import { API_HOST } from '../config/apiconfig';
 
 const QUESTION_API_URL = `${API_HOST}/QnA/question`;
