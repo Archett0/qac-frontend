@@ -14,9 +14,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 
 function AppLayout({ children }) {
-  const location = useLocation(); // 获取当前路径
+  const location = useLocation();
 
-  // 如果路径是 /login，则不渲染 Sidebar 和 Topbar
   const isLoginPage = location.pathname === '/login';
 
   return (
