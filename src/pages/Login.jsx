@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Link } from '@mui/material';
 import { handleLogin } from '../services/userService';
+import { Link as RouterLink } from 'react-router-dom';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -29,7 +30,7 @@ function LoginPage() {
 
       <Typography variant="body2" sx={{ textAlign: 'center', marginBottom: 2 }}>
         Don’t have an account?{' '}
-        <Link href="#" underline="hover">
+        <Link component={RouterLink} to="/register" underline="hover">
           Get started
         </Link>
       </Typography>

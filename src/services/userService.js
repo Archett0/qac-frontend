@@ -38,3 +38,32 @@ export async function handleLogin(e, email, password) {
         alert('login fail');
     }
 }
+
+/**
+ * @param {Event} e
+ * @param {string} email
+ * @param {string} password
+ * @param {string} username
+ */
+export async function handleRegister(e, email, password, username) {
+    e.preventDefault();
+    try {
+        const response = await axios.post(`${API_HOST}/user/auth/register`, {
+            email,
+            password,
+            username,
+        });
+
+        if (response.status === 201) {
+            alert('User registered successfully');
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        console.error('Register failed:', error);
+        if (error.response && error.response.status === 400) {
+            alert('User already exists');
+        } else {
+            alert('Registration failed. Please try again.');
+        }
+    }
+}

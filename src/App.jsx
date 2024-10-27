@@ -12,19 +12,21 @@ import QuestionUpdate from './pages/QuestionUpdate';
 import QuestionShow from './pages/QuestionShow';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 function AppLayout({ children }) {
   const location = useLocation();
 
-  const isLoginPage = location.pathname === '/login';
+  const noLayoutPages = ['/login', '/register'];
+  const isNoLayoutPage = noLayoutPages.includes(location.pathname);
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      {!isLoginPage && <Sidebar />}
+      {!isNoLayoutPage && <Sidebar />}
       <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
-        {!isLoginPage && <Toolbar />}
-        {!isLoginPage && <Topbar />}
+        {!isNoLayoutPage && <Toolbar />}
+        {!isNoLayoutPage && <Topbar />}
         {children}
       </Box>
     </Box>
@@ -78,6 +80,7 @@ function App() {
             } 
           />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} /> 
           <Route path="/signout" element={<SignOut />} />
         </Routes>
       </AppLayout>
