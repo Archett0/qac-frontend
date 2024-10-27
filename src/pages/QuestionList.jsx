@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, CircularProgress, TextField } from '@mui/material';
+import { Avatar, Button, CircularProgress, IconButton, Paper, TextField, Typography } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllQuestions, deleteQuestion } from '../services/questionService';
-import { searchQuestions } from '../services/searchService'; 
+import { searchQuestions } from '../services/searchService';
 
 const QuestionList = () => {
   const [questions, setQuestions] = useState([]);
@@ -71,52 +74,56 @@ const QuestionList = () => {
         </Button>
       </div>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Content</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((question) => (
-              <TableRow key={question.id}>
-                <TableCell>{question.title}</TableCell>
-                <TableCell>{question.content}</TableCell>
-                <TableCell>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Button
-                      component={Link}
-                      to={`/questions/show/${question.id}`}
-                      variant="contained"
-                      color="primary"
-                    >
-                      View
-                    </Button>
-                    <Button
-                      component={Link}
-                      to={`/questions/update/${question.id}`}
-                      variant="contained"
-                      color="secondary"
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      onClick={() => handleDelete(question.id)}
-                      variant="contained"
-                      color="error"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Paper style={{ padding: '16px' }}>
+        {questions.map((question) => (
+          <div
+            key={question.id}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              marginBottom: '25px', 
+              paddingBottom: '15px',
+              borderBottom: '1px solid #ccc', 
+            }}
+          >
+            <Avatar src={question.avatar || 'https://via.placeholder.com/150'} style={{ marginRight: '10px' }} />
+            <div style={{ flex: 1 }}>
+              <Typography variant="h6" style={{ fontWeight: 'bold' }}> 
+                {question.title}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" style={{ marginBottom: '8px' }}>
+                {question.content}
+              </Typography>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px' }}>
+                <IconButton
+                  component={Link}
+                  to={`/questions/show/${question.id}`}
+                  color="primary"
+                  size="small"
+                >
+                  <VisibilityIcon />
+                </IconButton>
+                <IconButton
+                  component={Link}
+                  to={`/questions/update/${question.id}`}
+                  color="secondary"
+                  size="small"
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => handleDelete(question.id)}
+                  color="error"
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Paper>
     </div>
   );
 };
