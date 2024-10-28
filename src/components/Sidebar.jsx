@@ -8,6 +8,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import './Sidebar.css';
+import logo from '../assets/logo.png';
 
 const Sidebar = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -65,8 +66,9 @@ const Sidebar = () => {
 
         {/* Logo or avatar */}
         <Box className="sidebar-logo" sx={{ display: 'flex', justifyContent: 'center', padding: '2vw 0' }}>
-          <Avatar alt="Logo" src="https://i.pravatar.cc/150?img=10" sx={{ width: '7vw', height: '7vw' }} />
+          <Avatar alt="Logo" src={logo} sx={{ width: '7vw', height: '7vw' }} />
         </Box>
+
 
         {/* Menu */}
         <Box className="sidebar-menu" sx={{ marginTop: '10vh', paddingBottom: '10px' }}>
