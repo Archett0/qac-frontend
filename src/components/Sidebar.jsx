@@ -4,9 +4,9 @@ import { Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Box, IconBu
 import { ExpandLess, ExpandMore, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ArticleIcon from '@mui/icons-material/Article';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -81,7 +81,7 @@ const Sidebar = () => {
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
-              {open && <ListItemText primary="Dashboard" />}
+              {open && <ListItemText primary="Home" />}
             </ListItem>
 
             <ListItem
@@ -100,7 +100,7 @@ const Sidebar = () => {
             {/* Questions Submenu */}
             <ListItem button onClick={handleQuestionsClick} className={`list-item ${selectedIndex === 2 ? 'selected' : ''}`}>
               <ListItemIcon>
-                <ShoppingCartIcon />
+                <FormatListBulletedIcon />
               </ListItemIcon>
               {open && <ListItemText primary="Questions" />}
               {open && (questionsOpen ? <ExpandLess /> : <ExpandMore />)}

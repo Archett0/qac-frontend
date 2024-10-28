@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Avatar, Typography, IconButton } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { clickUpvote, getUpvoteCount } from '../services/VoteService';
+import { jwtDecode } from 'jwt-decode';
 
 const CommentList = ({ comments }) => {
   // the number of upvotes of comment
   const [upvotes, setUpvotes] = useState({}); // { commentId: upvoteCount }
+  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'));
+  const userId = decodeToken.sub;
 
   // handle upvote click events
-  const handleUpvote = async (commentId) => {
+  const handleUpvote = async (commentId, ownerId) => {
     try {
       // to be change
-      await clickUpvote({ userId: '4396ad4a-cc41-4d06-812f-8cb3885c8449', postId: commentId, authorId: '4396ad4a-cc41-4d06-812f-8cb3885c5211', authorEmail: 'no.need', postType: 'ANSWER' });
+      await clickUpvote({ userId: userId, postId: commentId, authorId: ownerId, authorEmail: 'no.need', postType: 'ANSWER' });
       // get the number of upvote after clicking
       const updatedCount = await getUpvoteCount(commentId);
       setUpvotes((prevUpvotes) => ({
@@ -85,7 +88,7 @@ const CommentList = ({ comments }) => {
               </Typography>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <IconButton style={{ padding: '5px' }} 
-                  onClick={() => handleUpvote(comment.id)}  // handle upvote click
+                  onClick={() => handleUpvote(comment.id, comment.ownerId)}  // handle upvote click
                 >
                   <FavoriteIcon />
                 </IconButton>

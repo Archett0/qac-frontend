@@ -63,9 +63,9 @@ const ShowQuestion = () => {
   };
 
   // handle upvote click events
-  const handleUpvoteClick = async (answerId) => {
+  const handleUpvoteClick = async (answerId, ownerId) => {
     try {
-      await clickUpvote({ userId: '4396ad4a-cc41-4d06-812f-8cb3885c4396', postId: answerId, authorId: '4396ad4a-cc41-4d06-812f-8cb3885c6934', authorEmail: 'no.need', postType: 'ANSWER' });
+      await clickUpvote({ userId: userId, postId: answerId, authorId: ownerId, authorEmail: 'no.need', postType: 'ANSWER' });
       fetchUpvoteCount(answerId);
     } catch (error) {
       console.error('Failed to upvote:', error);
@@ -181,7 +181,7 @@ const ShowQuestion = () => {
                 variant="outlined"
                 startIcon={<ThumbUpAltIcon />}
                 style={{ borderRadius: '5px', padding: '5px 10px' }}
-                onClick={() => handleUpvoteClick(answer.id)} // handle upvote
+                onClick={() => handleUpvoteClick(answer.id, answer.ownerId)} // handle upvote
               >
                 {upvotes[answer.id] || 0} {/* 显示点赞数 */}
               </Button>
