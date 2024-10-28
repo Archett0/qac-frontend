@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, CircularProgress, IconButton, Paper, Typography, Divider, Box } from '@mui/material';
-import { Email, AccountCircle } from '@mui/icons-material';
+import { Email, AccountCircle, QuestionAnswer } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { jwtDecode } from 'jwt-decode';
 import { fetchQuestionsByOwnerId, deleteQuestion } from '../services/questionService';
+import { fetchUserProfile } from '../services/userService';
 
 const MyAccount = () => {
   const [questions, setQuestions] = useState([]);
@@ -22,12 +23,23 @@ const MyAccount = () => {
       try {
         const decodedToken = jwtDecode(token);
         setCurrentUserId(decodedToken.sub);
-        setUsername(decodedToken.username); 
-        setEmail(decodedToken.email); 
       } catch (err) {
         console.error('Failed to decode token', err);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        const userProfile = await fetchUserProfile(currentUserId);
+        setUsername(userProfile.username);
+        setEmail(userProfile.email);
+      } catch (err) {
+        console.error('Failed to fetch user profile:', err);
+        setError('Failed to load user information');
+      }
+    };
 
     const getQuestions = async () => {
       try {
@@ -41,6 +53,7 @@ const MyAccount = () => {
     };
 
     if (currentUserId) {
+      getUserProfile();
       getQuestions();
     }
   }, [currentUserId]);
@@ -86,9 +99,22 @@ const MyAccount = () => {
       </Paper>
 
       <Paper elevation={2} sx={{ padding: '16px' }}>
-        <Typography variant="h6" sx={{ marginBottom: '16px' }}>
-          My Questions
-        </Typography>
+        <Box display="flex" alignItems="center" sx={{ marginBottom: '16px' }}>
+            <QuestionAnswer sx={{ color: 'primary.main', marginRight: '8px' }} />
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold', 
+                fontSize: '1.5rem', 
+                borderBottom: '3px solid', 
+                borderColor: 'primary.main', 
+                display: 'inline-block',
+                paddingBottom: '4px' 
+              }}
+            >
+              My Questions
+            </Typography>
+          </Box>
         <Divider sx={{ marginBottom: '16px' }} />
         {questions.map((question) => (
           <Box
