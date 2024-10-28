@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { 
   Table, TableBody, TableCell, TableContainer, 
-  TableHead, TableRow, Paper, Avatar, Button, CircularProgress, TextField 
+  TableHead, TableRow, Paper, Avatar, Button, CircularProgress, TextField, IconButton, Select, MenuItem, ListItemIcon, ListItemText 
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { fetchUsers } from '../services/userService'; 
-import { searchUsers } from '../services/searchService'; 
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PersonIcon from '@mui/icons-material/Person';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchUsers, fetchUserProfile, updateUser, deleteUser } from '../services/userService'; 
+import { searchUsers } from '../services/searchService';
+import { jwtDecode } from 'jwt-decode';
 
 const getStatusButton = (status) => (
   <Button 
@@ -19,13 +23,49 @@ const getStatusButton = (status) => (
   </Button>
 );
 
+const getRoleButton = (role) => (
+  <Button 
+    variant="contained" 
+    color={role === 'ADMIN' ? 'success' : 'info'} 
+    size="small"
+  >
+    {role}
+  </Button>
+);
+
 const UserTable = () => {
   const [users, setUsers] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
   const [searchKeyword, setSearchKeyword] = useState(''); 
+  const [role, setRole] = useState(''); 
+  const [currentUserId, setCurrentUserId] = useState(null); 
+  const [editableUserId, setEditableUserId] = useState(null); 
 
   useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setCurrentUserId(decodedToken.sub);
+      } catch (err) {
+        console.error('Failed to decode token', err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        const userProfile = await fetchUserProfile(currentUserId);
+        setRole(userProfile.role || 'No Role Assigned'); 
+      } catch (err) {
+        console.error('Failed to fetch user profile:', err);
+        setError('Failed to load user information');
+      }
+    };
+
+
     const getUsers = async () => {
       try {
         const data = await fetchUsers(); 
@@ -37,8 +77,11 @@ const UserTable = () => {
       }
     };
 
-    getUsers(); 
-  }, []);
+    if (currentUserId) {
+      getUserProfile();
+    }
+    getUsers();
+  }, [currentUserId]);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -50,6 +93,36 @@ const UserTable = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteUser = async (id) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await deleteUser(id);
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      } catch (err) {
+        console.error('Failed to delete user', err);
+      }
+    }
+  };
+
+  const handleRoleChange = async (id, newRole) => {
+    const updatedUser = users.find((user) => user.id === id);
+    if (updatedUser) {
+      updatedUser.role = newRole;
+      try {
+        await updateUser(id, updatedUser);
+        setEditableUserId(null); 
+        alert('Role updated successfully');
+      } catch (err) {
+        console.error('Failed to update role', err);
+        alert('Failed to update role');
+      }
+    }
+  };
+
+  const handleUpdateClick = (id) => {
+    setEditableUserId(id);
   };
 
   if (loading) {
@@ -87,12 +160,12 @@ const UserTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Company</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Verified</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell></TableCell>
+              <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Name</TableCell>
+              <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Role</TableCell>
+              {/* <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Verified</TableCell> */}
+              <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Status</TableCell>
+              <TableCell sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -105,17 +178,44 @@ const UserTable = () => {
                   </div>
                 </TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
                 <TableCell>
-                  {user.role === 'USER' ? (
-                    <CheckCircleIcon color="success" />
+                  {editableUserId === user.id && role === 'ADMIN' ? (
+                    <Select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      displayEmpty
+                      renderValue={(value) => value || 'Select Role'}
+                    >
+                      <MenuItem value="USER">
+                        <ListItemIcon>
+                          <PersonIcon style={{ color: 'blue' }} />
+                        </ListItemIcon>
+                        <ListItemText primary="USER" />
+                      </MenuItem>
+                      <MenuItem value="ADMIN">
+                        <ListItemIcon>
+                          <AdminPanelSettingsIcon style={{ color: 'green' }} />
+                        </ListItemIcon>
+                        <ListItemText primary="ADMIN" />
+                      </MenuItem>
+                    </Select>
                   ) : (
-                    <CancelIcon color="error" />
+                    getRoleButton(user.role)
                   )}
                 </TableCell>
+                {/* <TableCell>{user.role === 'USER' ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}</TableCell> */}
                 <TableCell>{getStatusButton(user.status || 'Active')}</TableCell>
                 <TableCell>
-                  <MoreVertIcon />
+                  {role === 'ADMIN' && (
+                    <>
+                      <IconButton color="secondary" onClick={() => handleUpdateClick(user.id)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton color="error" onClick={() => handleDeleteUser(user.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
