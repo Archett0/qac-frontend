@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, CircularProgress, IconButton, Paper, Typography, Divider, Box } from '@mui/material';
-import { Email, AccountCircle, QuestionAnswer } from '@mui/icons-material';
+import { Email, AccountCircle, Security, QuestionAnswer } from '@mui/icons-material'; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,6 +16,7 @@ const MyAccount = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState(''); 
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -35,6 +36,7 @@ const MyAccount = () => {
         const userProfile = await fetchUserProfile(currentUserId);
         setUsername(userProfile.username);
         setEmail(userProfile.email);
+        setRole(userProfile.role || 'No Role Assigned'); 
       } catch (err) {
         console.error('Failed to fetch user profile:', err);
         setError('Failed to load user information');
@@ -84,37 +86,45 @@ const MyAccount = () => {
         <Typography variant="h5" sx={{ fontWeight: 'bold', marginTop: '10px' }}>
           {username}
         </Typography>
-        <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: '8px' }}>
-          <AccountCircle sx={{ color: 'gray', marginRight: '4px' }} />
-          <Typography variant="body1" color="textSecondary">
-            {username}
-          </Typography>
-        </Box>
-        <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: '4px' }}>
-          <Email sx={{ color: 'gray', marginRight: '4px' }} />
-          <Typography variant="body1" color="textSecondary">
-            {email}
-          </Typography>
+        <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: '12px' }}>
+          <Box display="flex" alignItems="center" sx={{ marginRight: '16px' }}>
+            <AccountCircle sx={{ color: 'gray', marginRight: '4px' }} />
+            <Typography variant="body1" color="textSecondary">
+              {username}
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" sx={{ marginRight: '16px' }}>
+            <Email sx={{ color: 'gray', marginRight: '4px' }} />
+            <Typography variant="body1" color="textSecondary">
+              {email}
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Security sx={{ color: 'gray', marginRight: '4px' }} />
+            <Typography variant="body1" color="textSecondary">
+              {role}
+            </Typography>
+          </Box>
         </Box>
       </Paper>
 
       <Paper elevation={2} sx={{ padding: '16px' }}>
         <Box display="flex" alignItems="center" sx={{ marginBottom: '16px' }}>
-            <QuestionAnswer sx={{ color: 'primary.main', marginRight: '8px' }} />
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 'bold', 
-                fontSize: '1.5rem', 
-                borderBottom: '3px solid', 
-                borderColor: 'primary.main', 
-                display: 'inline-block',
-                paddingBottom: '4px' 
-              }}
-            >
-              My Questions
-            </Typography>
-          </Box>
+          <QuestionAnswer sx={{ color: 'primary.main', marginRight: '8px' }} /> {/* 恢复图标 */}
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 'bold', 
+              fontSize: '1.5rem', 
+              borderBottom: '3px solid', 
+              borderColor: 'primary.main', 
+              display: 'inline-block',
+              paddingBottom: '4px' 
+            }}
+          >
+            My Questions
+          </Typography>
+        </Box>
         <Divider sx={{ marginBottom: '16px' }} />
         {questions.map((question) => (
           <Box

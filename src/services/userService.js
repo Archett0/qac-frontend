@@ -77,3 +77,23 @@ export async function handleRegister(e, email, password, username) {
         }
     }
 }
+
+export async function deleteUser(id) {
+    try {
+      const response = await axios.delete(`${USER_API_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
+  }
+  
+  export async function updateUser(id, user) {
+    try {
+      const response = await axios.put(`${USER_API_URL}/${id}`, user);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  }
