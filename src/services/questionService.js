@@ -46,3 +46,13 @@ export const fetchAllQuestions = async () => {
     throw error;
   }
 };
+export const fetchQuestionsByOwnerId = async (ownerId) => {
+  try {
+    const response = await axios.get(`${QUESTION_API_URL}/owner/${ownerId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching questions by owner ID:', error);
+    throw error;
+  }
+};
+
