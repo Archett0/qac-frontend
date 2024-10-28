@@ -125,24 +125,6 @@ const Sidebar = () => {
                 >
                   <ListItemText inset primary="Create" />
                 </ListItem>
-                {/* <ListItem
-                  button
-                  component={Link}
-                  to="/questions/update"
-                  onClick={(e) => handleListItemClick(5, e)}
-                  className={`list-item ${selectedIndex === 5 ? 'selected' : ''}`}
-                >
-                  <ListItemText inset primary="Update" />
-                </ListItem>
-                <ListItem
-                  button
-                  component={Link}
-                  to="/questions/show"
-                  onClick={(e) => handleListItemClick(6, e)}
-                  className={`list-item ${selectedIndex === 6 ? 'selected' : ''}`}
-                >
-                  <ListItemText inset primary="Show" />
-                </ListItem> */}
               </List>
             </Collapse>
 

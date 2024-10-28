@@ -6,14 +6,26 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllQuestions, deleteQuestion } from '../services/questionService';
 import { searchQuestions } from '../services/searchService';
+import { jwtDecode } from 'jwt-decode'
 
 const QuestionList = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setCurrentUserId(decodedToken.sub);
+      } catch (err) {
+        console.error('Failed to decode token', err);
+      }
+    }
+
     const getQuestions = async () => {
       try {
         const data = await fetchAllQuestions();
@@ -104,21 +116,25 @@ const QuestionList = () => {
                 >
                   <VisibilityIcon />
                 </IconButton>
-                <IconButton
-                  component={Link}
-                  to={`/questions/update/${question.id}`}
-                  color="secondary"
-                  size="small"
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  onClick={() => handleDelete(question.id)}
-                  color="error"
-                  size="small"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                {currentUserId === question.ownerId && (
+                  <>
+                    <IconButton
+                      component={Link}
+                      to={`/questions/update/${question.id}`}
+                      color="secondary"
+                      size="small"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(question.id)}
+                      color="error"
+                      size="small"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ import QuestionShow from './pages/QuestionShow';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import MyAccount from './pages/MyAccount';
 
 function AppLayout({ children }) {
   const location = useLocation();
@@ -76,6 +77,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <QuestionShow />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/myaccount" 
+            element={
+              <ProtectedRoute>
+                <MyAccount />
               </ProtectedRoute>
             } 
           />

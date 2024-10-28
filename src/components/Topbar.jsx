@@ -4,7 +4,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import LanguageIcon from '@mui/icons-material/Language';
 import Notification from './Notification';
 import { fetchNotifications, connectWebSocket } from '../services/eventService';
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
+import { Link } from 'react-router-dom';
 
 const Topbar = () => {
   const [open, setOpen] = useState(false);
@@ -25,14 +26,14 @@ const Topbar = () => {
   };
 
   useEffect(() => {
-    getNotifications(); 
+    getNotifications();
 
-    const disconnect = connectWebSocket(userId, setNotifications); 
+    const disconnect = connectWebSocket(userId, setNotifications);
 
     return () => {
       disconnect();
     };
-  }, []);
+  }, [userId]);
 
   const handleNotificationOpen = () => {
     setOpen(true);
@@ -65,7 +66,8 @@ const Topbar = () => {
           <IconButton color="inherit" sx={{ mr: 2 }}>
             <LanguageIcon />
           </IconButton>
-          <IconButton color="inherit" sx={{ mr: 2 }}>
+          {/* 添加 Link 组件以便点击头像导航到 My Account 页面 */}
+          <IconButton component={Link} to="/myaccount" color="inherit" sx={{ mr: 2 }}>
             <Avatar alt="User Avatar" src="https://i.pravatar.cc/300" />
           </IconButton>
         </div>

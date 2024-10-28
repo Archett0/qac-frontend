@@ -18,6 +18,21 @@ export async function fetchUsers() {
 }
 
 /**
+ * Fetches the user profile by ID from the API.
+ * @param {string} userId The user's ID
+ * @returns {Promise<Object>} A promise that resolves to the user's profile data.
+ */
+export async function fetchUserProfile(userId) {
+    try {
+        const response = await axios.get(`${USER_API_URL}/profile/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        throw error; // Propagate error to handle it in the calling function
+    }
+}
+
+/**
  * @param {Event} e
  * @param {string} email
  * @param {string} password

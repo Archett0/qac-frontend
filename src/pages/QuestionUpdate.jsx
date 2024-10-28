@@ -27,7 +27,7 @@ const UpdateQuestion = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await updateQuestion(question);
+      await updateQuestion({ title: question.title, content: question.content, id: question.id }); // 不包含 ownerId
       navigate('/questions');
     } catch (err) {
       console.error('Failed to update question', err);
@@ -63,15 +63,7 @@ const UpdateQuestion = () => {
         margin="normal"
         required
       />
-      <TextField
-        name="ownerId"
-        label="Owner ID"
-        value={question.ownerId}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-        required
-      />
+
       <Button type="submit" variant="contained" color="primary" disabled={loading}>
         {loading ? <CircularProgress size={24} /> : 'Update'}
       </Button>
