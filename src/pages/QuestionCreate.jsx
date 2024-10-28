@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { TextField, Button, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { createQuestion } from '../services/questionService'; 
+import { jwtDecode } from 'jwt-decode'
 
 const CreateQuestion = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const ownerId = '550e8400-e29b-41d4-a716-446655440000';
+  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'))
+  const ownerId = decodeToken.sub; 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,7 +17,7 @@ const CreateQuestion = () => {
     setLoading(true);
     try {
       await createQuestion({ title, content, ownerId });
-      navigate('/questions'); 
+      navigate('/questions/list'); 
     } catch (err) {
       console.error('Failed to create question', err);
     } finally {

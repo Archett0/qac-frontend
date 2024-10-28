@@ -133,25 +133,35 @@ export async function deleteNotification(userId, notificationId) {
 
 
 /**
- * Connects to the WebSocket for real-time notifications.
+ * Connects to the WebSocket for real-time notifications with a Bearer token for authentication.
  */
 export function connectWebSocket(userId, setNotifications) {
-    const socket = new SockJS(`${API_HOST}/ws`);
+    const token = localStorage.getItem('jwtToken');
+
+    if (!token) {
+        console.error('No token found. WebSocket connection not established.');
+        return;
+    }
+
+    // Append token as a query parameter for the SockJS connection
+    const socket = new SockJS(`${API_HOST}/ws?token=${token}`);
     const stompClient = Stomp.over(socket);
 
-    stompClient.connect({ 'userId': userId }, (frame) => {
-        console.log('WebSocket connected:', frame);
-        stompClient.subscribe(`/user/${userId}/notification`, (message) => {
-            const data = JSON.parse(message.body);
-            const notification = new Notification(data.message, data.sentAt, data.notificationType);
+    stompClient.connect(
+        { 'userId': userId }, 
+        (frame) => {
+            console.log('WebSocket connected:', frame);
+            stompClient.subscribe(`/user/${userId}/notification`, (message) => {
+                const data = JSON.parse(message.body);
+                const notification = new Notification(data.message, data.sentAt, data.notificationType);
 
-            setNotifications((prevNotifications) => [...prevNotifications, notification]);
-
-            //console.log('Received message:', message.body);
-        });
-    }, (error) => {
-        console.error('WebSocket connection error:', error);
-    });
+                setNotifications((prevNotifications) => [...prevNotifications, notification]);
+            });
+        }, 
+        (error) => {
+            console.error('WebSocket connection error:', error);
+        }
+    );
 
     return () => {
         stompClient.disconnect(() => {

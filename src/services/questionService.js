@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../config/axios';
 import { API_HOST } from '../config/apiconfig';
 
 const QUESTION_API_URL = `${API_HOST}/QnA/question`;
@@ -46,3 +46,13 @@ export const fetchAllQuestions = async () => {
     throw error;
   }
 };
+export const fetchQuestionsByOwnerId = async (ownerId) => {
+  try {
+    const response = await axios.get(`${QUESTION_API_URL}/owner/${ownerId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching questions by owner ID:', error);
+    throw error;
+  }
+};
+

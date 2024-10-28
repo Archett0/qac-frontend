@@ -10,6 +10,7 @@ import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import CommentIcon from '@mui/icons-material/Comment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CommentList from './CommentList'; 
+import { jwtDecode } from 'jwt-decode'
 
 const ShowQuestion = () => {
   const { id } = useParams();
@@ -22,6 +23,8 @@ const ShowQuestion = () => {
   const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState(''); 
   const [upvotes, setUpvotes] = useState({}); // upvote
+  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'))
+  const userId = decodeToken.sub; 
 
   useEffect(() => {
     const getQuestionAndAnswers = async () => {
@@ -71,8 +74,7 @@ const ShowQuestion = () => {
 
   const handleCreateAnswer = async () => {
     try {
-      const randomUUID = "d5a28a89-4772-4a5f-a896-f55b8019c46e"; 
-      const answerData = { content: newAnswer, questionId: id, ownerId: randomUUID};
+      const answerData = { content: newAnswer, questionId: id, ownerId: userId};
       const createdAnswer = await createAnswer(answerData);
       setAnswers([...answers, createdAnswer]);
       setNewAnswer('');
@@ -122,8 +124,7 @@ const ShowQuestion = () => {
   
   const handleCommentSubmit = async (answerId) => {
     try {
-        const ownerId = '6acb69c0-ba2b-4f62-b813-5c68563b8f48'; 
-        const createdComment = await sendComment(ownerId, answerId, newComment);
+        const createdComment = await sendComment(userId, answerId, newComment);
 
         setComments((prevComments) => ({
             ...prevComments,

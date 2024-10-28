@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignOut = () => {
-  return <h1>Sign Out Page</h1>;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    localStorage.removeItem('jwtToken');
+
+    navigate('/login');
+  }, [navigate]);
+
+  return <h1>Sign out success</h1>;
 };
 
 export default SignOut;
