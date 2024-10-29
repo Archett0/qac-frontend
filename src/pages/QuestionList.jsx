@@ -4,9 +4,11 @@ import { Avatar, Button, CircularProgress, IconButton, Paper, TextField, Typogra
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { fetchAllQuestions, deleteQuestion } from '../services/questionService';
 import { searchQuestions } from '../services/searchService';
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
 
 const QuestionList = () => {
   const [questions, setQuestions] = useState([]);
@@ -14,6 +16,8 @@ const QuestionList = () => {
   const [error, setError] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const questionsPerPage = 10;
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -63,6 +67,19 @@ const QuestionList = () => {
     }
   };
 
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  // Calculate the start and end index for the questions to be displayed on the current page
+  const startIndex = (currentPage - 1) * questionsPerPage;
+  const endIndex = startIndex + questionsPerPage;
+  const displayedQuestions = questions.slice(startIndex, endIndex);
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -87,20 +104,20 @@ const QuestionList = () => {
       </div>
 
       <Paper style={{ padding: '16px' }}>
-        {questions.map((question) => (
+        {displayedQuestions.map((question) => (
           <div
             key={question.id}
             style={{
               display: 'flex',
               alignItems: 'flex-start',
-              marginBottom: '25px', 
+              marginBottom: '25px',
               paddingBottom: '15px',
-              borderBottom: '1px solid #ccc', 
+              borderBottom: '1px solid #ccc',
             }}
           >
             <Avatar src={question.avatar || 'https://via.placeholder.com/150'} style={{ marginRight: '10px' }} />
             <div style={{ flex: 1 }}>
-              <Typography variant="h6" style={{ fontWeight: 'bold' }}> 
+              <Typography variant="h6" style={{ fontWeight: 'bold' }}>
                 {question.title}
               </Typography>
               <Typography variant="body2" color="textSecondary" style={{ marginBottom: '8px' }}>
@@ -139,6 +156,25 @@ const QuestionList = () => {
             </div>
           </div>
         ))}
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+          <IconButton
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            style={{ marginRight: '8px' }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="body1" style={{ margin: '0 16px' }}>
+            Page {currentPage}
+          </Typography>
+          <IconButton
+            onClick={handleNextPage}
+            disabled={endIndex >= questions.length}
+          >
+            <ArrowForwardIcon />
+          </IconButton>
+        </div>
       </Paper>
     </div>
   );
