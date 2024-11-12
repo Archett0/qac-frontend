@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
 import { useParams } from 'react-router-dom';
 import { fetchQuestionById } from '../services/questionService';
-import { sendComment, fetchCommentsByAnswerId, deleteCommentByAnswerId } from '../services/eventService';
+import { sendComment, fetchCommentsByAnswerId, deleteCommentByAnswerId, deleteComment } from '../services/eventService';
 import { createAnswer, fetchAnswersByQuestionId, deleteAnswerById } from '../services/AnswerService';
 import { clickUpvote, getUpvoteCount } from '../services/VoteService'; // upvote
 import { CircularProgress, Typography, Paper, Divider, Button, TextField, IconButton, Avatar } from '@mui/material';
@@ -128,6 +128,20 @@ const ShowQuestion = () => {
   const handleCommentChange = (e) => {
     setNewComment(e.target.value);
   };
+
+
+  const handleDeleteComment = async (commentId, answerId) => {
+    try {
+      await deleteComment(commentId);
+      setComments((prevComments) => ({
+        ...prevComments,
+        [answerId]: prevComments[answerId].filter((comment) => comment.id !== commentId),
+      }));
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+    }
+  };
+  
   
 
   const handleCommentSubmit = async (answerId) => {
@@ -250,7 +264,10 @@ const ShowQuestion = () => {
                 </Button>
               </div>
 
-              <CommentList comments={comments[answer.id] || []} />
+
+              <CommentList comments={comments[answer.id] || []} onDeleteComment={(commentId) => handleDeleteComment(commentId, answer.id)} />
+
+              {/* <CommentList comments={comments[answer.id] || []} /> */}
             </div>
           )}
         </Paper>
