@@ -62,3 +62,18 @@ export async function hasUserVoted(hasUserVotedRequest) {
         throw error;
     }
 }
+
+/**
+ * Deletes a vote for a specific post.
+ * @param {string} postId - The ID of the post for which the vote should be deleted.
+ * @returns {Promise<string>} - A message indicating the result of the delete operation.
+ */
+export async function deleteVote(postId) {
+    try {
+        const response = await axios.delete(`${VOTE_API_URL}/delete-vote/${postId}`);
+        return response.data; // 返回删除成功的信息
+    } catch (error) {
+        console.error('Error deleting vote:', error);
+        throw error;
+    }
+}
