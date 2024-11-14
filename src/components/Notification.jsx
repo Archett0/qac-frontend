@@ -7,7 +7,12 @@ import { deleteNotification } from '../services/eventService';
 import { jwtDecode } from 'jwt-decode'
 
 export default function Notification({ open, onClose, notifications, onCountChange, onDelete }) {
-  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'));
+  const token = localStorage.getItem('jwtToken');
+  if (!token) {
+    console.error('No JWT token found');
+    return null;
+  }
+  const decodeToken = jwtDecode(token);
   const userId = decodeToken.sub;
   const panelRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
