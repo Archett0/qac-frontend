@@ -12,8 +12,15 @@ const Topbar = () => {
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
 
-  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'));
-  const userId = decodeToken.sub;
+  const token = localStorage.getItem('jwtToken');
+  let userId;
+
+  if (token) {
+    const decodeToken = jwtDecode(token);
+    userId = decodeToken.sub;
+  } else {
+    console.error('No JWT token found');
+  }
 
   const getNotifications = async () => {
     try {

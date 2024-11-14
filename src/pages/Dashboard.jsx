@@ -4,10 +4,6 @@ import QuestionList from './QuestionList';
 
 const Dashboard = () => {
 
-  const token = localStorage.getItem('jwtToken');
-  const decodedToken = jwtDecode(token);
-  const subject = decodedToken.sub;
-
   return (
     <div>
       {/* <h1>Dashboard Page</h1>
