@@ -3,20 +3,22 @@ import { TextField, Button, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { createQuestion } from '../services/questionService'; 
 import { jwtDecode } from 'jwt-decode'
+import {useAuth0} from "@auth0/auth0-react";
 
 const CreateQuestion = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const decodeToken = jwtDecode(localStorage.getItem('jwtToken'))
-  const ownerId = decodeToken.sub; 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await createQuestion({ title, content, ownerId });
+      const token = await getAccessTokenSilently();
+      const ownerId = user['https://your-domain.com/uuid']
+      await createQuestion({ title, content, ownerId }, token);
       navigate('/questions/list'); 
     } catch (err) {
       console.error('Failed to create question', err);

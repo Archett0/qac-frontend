@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { Stomp } from '@stomp/stompjs';
+import {Stomp} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { API_HOST } from '../config/apiConfig';
-import { Notification } from '../model/Notification';
+import {API_HOST} from '../config/apiConfig';
+import {Notification} from '../model/Notification';
 
 const event_API_URL = `${API_HOST}/event`;
 
@@ -12,7 +12,7 @@ const event_API_URL = `${API_HOST}/event`;
 export async function fetchEvents() {
     try {
         const response = await axios.get(event_API_URL);
-        console.log('Fetched events:', response.data); 
+        console.log('Fetched events:', response.data);
     } catch (error) {
         console.error('Error fetching events:', error);
     }
@@ -21,10 +21,16 @@ export async function fetchEvents() {
 /**
  * Fetches comments by answerId.
  * @param {string} answerId - The UUID of the answerId to fetch comments for.
+ * @param token
  */
-export async function fetchCommentsByAnswerId(answerId) {
+export async function fetchCommentsByAnswerId(answerId, token) {
     try {
-        const response = await axios.get(`${API_HOST}/comment/getCommentByAnswerId/${answerId}`);
+        const response = await axios.get(`${API_HOST}/comment/getCommentByAnswerId/${answerId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
         console.log('Fetched comments:', response.data);
         return response.data;
     } catch (error) {
@@ -38,13 +44,19 @@ export async function fetchCommentsByAnswerId(answerId) {
  * @param {string} ownerId - The UUID of the user (owner of the comment).
  * @param {string} answerId - The ID of the answer the comment is associated with.
  * @param {string} content - The content of the comment.
+ * @param token
  */
-export async function sendComment(ownerId, answerId, content) {
+export async function sendComment(ownerId, answerId, content, token) {
     try {
         const response = await axios.post(`${API_HOST}/comment/sendComment`, {
             content,
             ownerId,
             answerId
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
         });
         console.log('Sent comment:', response.data);
         return response.data;
@@ -58,10 +70,16 @@ export async function sendComment(ownerId, answerId, content) {
 /**
  * Deletes a comment for a given user.
  * @param {string} commentId - The UUID of the comment to delete.
+ * @param token
  */
-export async function deleteComment(commentId) {
+export async function deleteComment(commentId, token) {
     try {
-        const response = await axios.delete(`${API_HOST}/comment/deleteComment/${commentId}`);
+        const response = await axios.delete(`${API_HOST}/comment/deleteComment/${commentId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
         console.log('Deleted comment:', response.data);
         return response.data;
     } catch (error) {
@@ -73,10 +91,16 @@ export async function deleteComment(commentId) {
 /**
  * Deletes a comment for a given user.
  * @param {string} answerId - The UUID of the answer to delete.
+ * @param token
  */
-export async function deleteCommentByAnswerId(answerId) {
+export async function deleteCommentByAnswerId(answerId, token) {
     try {
-        await axios.delete(`${API_HOST}/comment/deleteCommentByAnswerId/${answerId}`);
+        await axios.delete(`${API_HOST}/comment/deleteCommentByAnswerId/${answerId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
     } catch (error) {
         console.error('Error deleting comment:', error);
         throw error;
@@ -88,10 +112,16 @@ export async function deleteCommentByAnswerId(answerId) {
  * Modifies a comment for a given user.
  * @param {string} commentId - The UUID of the comment to modify.
  * @param {Object} updatedData - The updated data for the comment.
+ * @param token
  */
-export async function modifyComment(commentId, updatedData) {
+export async function modifyComment(commentId, updatedData, token) {
     try {
-        const response = await axios.put(`${API_HOST}/comment/modifyComment/${commentId}`, updatedData);
+        const response = await axios.put(`${API_HOST}/comment/modifyComment/${commentId}`, updatedData, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
         console.log('Modified comment:', response.data);
         return response.data;
     } catch (error) {
@@ -103,15 +133,21 @@ export async function modifyComment(commentId, updatedData) {
 /**
  * Fetches all notifications for a given user.
  * @param {string} userId - The UUID of the user.
+ * @param token
  */
-export async function fetchNotifications(userId) {
+export async function fetchNotifications(userId, token) {
     try {
-        const response = await axios.get(`${API_HOST}/notification/${userId}/`);
+        const response = await axios.get(`${API_HOST}/notification/${userId}/`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
         //console.log('Fetched notifications:', response.data);
-        return response.data; 
+        return response.data;
     } catch (error) {
         console.error('Error fetching notifications:', error);
-        throw error; 
+        throw error;
     }
 }
 
@@ -119,53 +155,20 @@ export async function fetchNotifications(userId) {
  * Deletes a notification for a given user.
  * @param {string} userId - The UUID of the user.
  * @param {number} notificationId - The ID of the notification to delete.
+ * @param token
  */
-export async function deleteNotification(userId, notificationId) {
+export async function deleteNotification(userId, notificationId, token) {
     try {
-        const response = await axios.delete(`${API_HOST}/notification/deleteNotification/${userId}/${notificationId}`);
+        const response = await axios.delete(`${API_HOST}/notification/deleteNotification/${userId}/${notificationId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        });
         console.log('Deleted notification:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error deleting notification:', error);
         throw error;
     }
-}
-
-
-/**
- * Connects to the WebSocket for real-time notifications with a Bearer token for authentication.
- */
-export function connectWebSocket(userId, setNotifications) {
-    const token = localStorage.getItem('jwtToken');
-
-    if (!token) {
-        console.error('No token found. WebSocket connection not established.');
-        return;
-    }
-
-    // Append token as a query parameter for the SockJS connection
-    const socket = new SockJS(`${API_HOST}/ws?token=${token}`);
-    const stompClient = Stomp.over(socket);
-
-    stompClient.connect(
-        { 'userId': userId }, 
-        (frame) => {
-            console.log('WebSocket connected:', frame);
-            stompClient.subscribe(`/user/${userId}/notification`, (message) => {
-                const data = JSON.parse(message.body);
-                const notification = new Notification(data.message, data.sentAt, data.notificationType);
-
-                setNotifications((prevNotifications) => [...prevNotifications, notification]);
-            });
-        }, 
-        (error) => {
-            console.error('WebSocket connection error:', error);
-        }
-    );
-
-    return () => {
-        stompClient.disconnect(() => {
-            console.log('WebSocket disconnected');
-        });
-    };
 }

@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useAuth0} from "@auth0/auth0-react";
 
 const SignOut = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const {logout} = useAuth0();
 
-  useEffect(() => {
+    useEffect(() => {
+        logout({logoutParams: {returnTo: 'http://localhost:5173/login'}});
+        navigate('/login');
+    }, [logout, navigate]);
 
-    localStorage.removeItem('jwtToken');
-
-    navigate('/login');
-  }, [navigate]);
-
-  return <h1>Sign out success</h1>;
+    return <h1>Sign out success</h1>;
 };
 
 export default SignOut;

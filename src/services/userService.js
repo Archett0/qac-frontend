@@ -1,5 +1,5 @@
 import axios from '../config/axios';
-import { API_HOST } from '../config/apiconfig';
+import {API_HOST} from '../config/apiconfig';
 
 const USER_API_URL = `${API_HOST}/user`;
 
@@ -7,9 +7,14 @@ const USER_API_URL = `${API_HOST}/user`;
  * Fetches users from the API.
  * @returns {Promise<Array>} A promise that resolves to an array of users.
  */
-export async function fetchUsers() {
+export async function fetchUsers(token) {
     try {
-        const response = await axios.get(USER_API_URL);
+        const response = await axios.get(USER_API_URL, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data; // Return the users data array
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -17,9 +22,14 @@ export async function fetchUsers() {
     }
 }
 
-export async function fetchUserProfile(userId) {
+export async function fetchUserProfile(userId, token) {
     try {
-        const response = await axios.get(`${USER_API_URL}/${userId}`);
+        const response = await axios.get(`${USER_API_URL}/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -27,73 +37,32 @@ export async function fetchUserProfile(userId) {
     }
 }
 
-/**
- * @param {Event} e
- * @param {string} email
- * @param {string} password
- */
-export async function handleLogin(e, email, password) {
-    e.preventDefault();
+export async function deleteUser(id, token) {
     try {
-        const response = await axios.post(`${API_HOST}/user/auth/login`, {
-            email,
-            password,
+        const response = await axios.delete(`${USER_API_URL}/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
         });
-        const token = response.data.token;
-        localStorage.setItem('jwtToken', token);
-
-        window.location.href = '/';
+        return response.data;
     } catch (error) {
-        console.error('login fail:', error);
-        alert('login fail');
+        console.error('Error deleting user:', error);
+        throw error;
     }
 }
 
-/**
- * @param {Event} e
- * @param {string} email
- * @param {string} password
- * @param {string} username
- */
-export async function handleRegister(e, email, password, username) {
-    e.preventDefault();
+export async function updateUser(id, user, token) {
     try {
-        const response = await axios.post(`${API_HOST}/user/auth/register`, {
-            email,
-            password,
-            username,
+        const response = await axios.put(`${USER_API_URL}/${id}`, user, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
         });
-
-        if (response.status === 201) {
-            alert('User registered successfully');
-            window.location.href = '/login';
-        }
+        return response.data;
     } catch (error) {
-        console.error('Register failed:', error);
-        if (error.response && error.response.status === 400) {
-            alert('User already exists');
-        } else {
-            alert('Registration failed. Please try again.');
-        }
+        console.error('Error updating user:', error);
+        throw error;
     }
 }
-
-export async function deleteUser(id) {
-    try {
-      const response = await axios.delete(`${USER_API_URL}/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      throw error;
-    }
-  }
-  
-  export async function updateUser(id, user) {
-    try {
-      const response = await axios.put(`${USER_API_URL}/${id}`, user);
-      return response.data;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      throw error;
-    }
-  }
