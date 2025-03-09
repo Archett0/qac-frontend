@@ -7,7 +7,7 @@ const SignOut = () => {
     const {logout} = useAuth0();
 
     useEffect(() => {
-        logout({logoutParams: {returnTo: 'http://localhost:5173/login'}});
+        logout({logoutParams: {returnTo: 'https://localhost:5173/login'}});
         navigate('/login');
     }, [logout, navigate]);
 
