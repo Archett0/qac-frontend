@@ -11,7 +11,7 @@ const VOTE_API_URL = `${API_HOST}/vote`;
  */
 export async function clickUpvote(voteRequest, token) {
     try {
-        const response = await axios.post(`${VOTE_API_URL}/upvote/${voteRequest.postId}`, voteRequest, {
+        const response = await axios.post(`${VOTE_API_URL}/upvote`, voteRequest, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,

@@ -10,6 +10,7 @@ export default defineConfig({
         global: 'window'
     },
     server: {
+        port: 3000,
         https: {
             key: fs.readFileSync(path.resolve('localhost+1-key.pem')),
             cert: fs.readFileSync(path.resolve('localhost+1.pem'))
